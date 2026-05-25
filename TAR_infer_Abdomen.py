@@ -44,7 +44,7 @@ def count_elements_in_3d_array(array):
 
 
     for num in sorted_keys:
-        print(f"数值 {num} 出现了 {element_count[num]} 次")
+        print(f" {num} tmies {element_count[num]}")
 
 def same_seeds(seed):
     # Python built-in random module
@@ -163,9 +163,9 @@ def main():
         return float(loss_str)
     model_files = glob.glob(os.path.join(config["save_dir"], "epoch_*.pth"))
     if len(model_files) == 0:
-        raise FileNotFoundError(f"模型目录 {config['save_dir']} 下未找到模型文件！")
+        raise FileNotFoundError(f" {config['save_dir']} no found！")
     best_model_path = min(model_files, key=get_val_loss_from_filename)
-    print(f"\n加载最佳模型：{os.path.basename(best_model_path)}")
+    print(f"\nGet Best：{os.path.basename(best_model_path)}")
 
     unetmodel.load_state_dict(torch.load(best_model_path, map_location=config["device"]))
     unetmodel.eval()
@@ -298,12 +298,11 @@ def main():
             fix_label = data[3]
             move = data[4]
             fix = data[5]  ## y = fix
-            #________________________________________________________
-            # 可以用于判断标签数量
+            
             # xsee= fix_label.detach().cpu().numpy()[0, 0, ...]
             # count_elements_in_3d_array(xsee)
             with torch.no_grad():
-                move_pred_prob = unetmodel(move)  # 概率图
+                move_pred_prob = unetmodel(move)  
                 fix_pred_prob = unetmodel(fix)
 
                 move_pred_class = torch.argmax(move_pred_prob, dim=1, keepdim=True)
@@ -329,9 +328,9 @@ def main():
             def_out = reg_model([def_out1.cuda().float(), flow.cuda()])
             img_out1 = reg_model_img([move.cuda().float(), mask_flow.cuda()])
             img_out = reg_model_img([img_out1.cuda().float(), flow.cuda()])
-            s
+            
             tar = move.detach().cpu().numpy()[0, 0, :, :, :]
-            #
+            
 
             dsc, hd, asd = utils.metric_val_VOI_Abd(def_out.long(), fix_label.long())
             dsc_raw = utils.dice_raw_VOI_Abd(fix_label.long(), move_label.long())
@@ -350,7 +349,7 @@ def main():
 
 
             # dsc_trans = utils.dice_val_VOI(def_out.long(), fix_seg.long())
-            # dsc_raw = utils.dice_val_VOI(fix_seg.long(), move_seg.long())  #dice_val_VOI用于计算Dice
+            # dsc_raw = utils.dice_val_VOI(fix_seg.long(), move_seg.long()) 
             # #
             # def_out_3d = torch.squeeze(def_out)
             # def_out_3d = def_out_3d.cpu().numpy()
